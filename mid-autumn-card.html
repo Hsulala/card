@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>中秋佳節・花好月圓</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;700;900&family=Cormorant+Garamond:ital@1&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --moonlight-silver:#E8E3F0;
+    --deep-purple:#1B1030;
+    --deep-purple-2:#2D1B4E;
+    --gold:#F5D67B;
+    --gold-deep:#D9A441;
+    --osmanthus:#F2B84B;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{
+    margin:0; padding:0; width:100%; height:100%;
+    overflow:hidden;
+    background:var(--deep-purple);
+    font-family:"Noto Serif TC", serif;
+    color:var(--moonlight-silver);
+  }
+  #scene{
+    position:relative;
+    width:100%;
+    height:100vh;
+    height:100dvh;
+    overflow:hidden;
+    background:
+      radial-gradient(ellipse 120% 60% at 50% 8%, #3A2560 0%, transparent 60%),
+      linear-gradient(180deg, var(--deep-purple) 0%, #150B26 55%, #0D0716 100%);
+  }
+
+  /* ---------- 星空 ---------- */
+  .star{
+    position:absolute;
+    width:2px; height:2px;
+    background:var(--moonlight-silver);
+    border-radius:50%;
+    opacity:.3;
+    animation:twinkle 3.5s ease-in-out infinite;
+  }
+  @keyframes twinkle{
+    0%,100%{opacity:.15; transform:scale(1);}
+    50%{opacity:.85; transform:scale(1.6);}
+  }
+
+  /* ---------- 標題 ---------- */
+  .header{
+    position:absolute; top:0; left:0; right:0;
+    padding:calc(28px + env(safe-area-inset-top,0px)) 24px 0;
+    text-align:center;
+    z-index:5;
+    pointer-events:none;
+  }
+  .header .eyebrow{
+    font-family:"Cormorant Garamond", serif;
+    font-style:italic;
+    font-size:13px;
+    letter-spacing:.3em;
+    color:var(--gold);
+    opacity:.75;
+    margin:0 0 6px;
+  }
+  .header h1{
+    margin:0;
+    font-size:26px;
+    font-weight:700;
+    letter-spacing:.15em;
+    color:var(--moonlight-silver);
+    text-shadow:0 0 24px rgba(245,214,123,.25);
+  }
+
+  /* ---------- 月亮 ---------- */
+  .moon-stage{
+    position:absolute;
+    top:50%; left:50%;
+    transform:translate(-50%,-52%);
+    width:min(62vw, 300px);
+    aspect-ratio:1/1;
+    z-index:3;
+  }
+  .moon-glow{
+    position:absolute; inset:-22%;
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(245,214,123,.55) 0%, rgba(245,214,123,0) 68%);
+    opacity:.25;
+    transition:opacity 1.1s ease;
+    pointer-events:none;
+  }
+  canvas{
+    position:absolute; inset:0;
+    width:100%; height:100%;
+    display:block;
+  }
+  #moonCanvas{ cursor:pointer; }
+  #cloudCanvas{ touch-action:none; z-index:2; }
+
+  /* ---------- 桂花 ---------- */
+  #petalLayer{
+    position:absolute; inset:0;
+    pointer-events:none;
+    z-index:4;
+    overflow:hidden;
+  }
+  .petal{
+    position:absolute;
+    top:-5%;
+    width:7px; height:7px;
+    background:var(--osmanthus);
+    border-radius:2px 8px 2px 8px;
+    opacity:.85;
+    box-shadow:0 0 4px rgba(242,184,75,.6);
+    animation-name:fall;
+    animation-timing-function:linear;
+    animation-iteration-count:infinite;
+  }
+  @keyframes fall{
+    0%{ transform:translateY(-5vh) translateX(0) rotate(0deg); }
+    100%{ transform:translateY(110vh) translateX(var(--drift, 40px)) rotate(320deg); }
+  }
+
+  /* ---------- 提示文字 ---------- */
+  .hint{
+    position:absolute;
+    left:0; right:0;
+    bottom:calc(14% + env(safe-area-inset-bottom,0px));
+    text-align:center;
+    z-index:6;
+    font-family:"Cormorant Garamond", serif;
+    font-style:italic;
+    font-size:15px;
+    letter-spacing:.08em;
+    color:var(--moonlight-silver);
+    opacity:.7;
+    transition:opacity .6s ease;
+    pointer-events:none;
+  }
+  .hint.hide{ opacity:0; }
+
+  /* ---------- 祝福卡 ---------- */
+  #blessing{
+    position:absolute;
+    left:0; right:0;
+    bottom:0;
+    padding:32px 28px calc(40px + env(safe-area-inset-bottom,0px));
+    text-align:center;
+    z-index:7;
+    background:linear-gradient(180deg, rgba(13,7,22,0) 0%, rgba(13,7,22,.92) 32%, #0D0716 100%);
+    opacity:0;
+    transform:translateY(24px);
+    transition:opacity 1.2s ease, transform 1.2s ease;
+    pointer-events:none;
+  }
+  #blessing.show{
+    opacity:1;
+    transform:translateY(0);
+    pointer-events:auto;
+  }
+  #blessing .to{
+    font-size:14px;
+    letter-spacing:.1em;
+    color:var(--gold);
+    opacity:.85;
+    margin:0 0 10px;
+  }
+  #blessing p{
+    margin:0;
+    font-size:17px;
+    line-height:2;
+    font-weight:500;
+    color:var(--moonlight-silver);
+  }
+  #blessing .sign{
+    margin-top:18px;
+    font-size:12px;
+    letter-spacing:.25em;
+    color:var(--moonlight-silver);
+    opacity:.5;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .star, .petal{ animation:none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div id="scene">
+  <div id="starLayer"></div>
+
+  <div class="header">
+    <p class="eyebrow">MID-AUTUMN FESTIVAL</p>
+    <h1>中秋佳節・花好月圓</h1>
+  </div>
+
+  <div class="moon-stage">
+    <div class="moon-glow" id="moonGlow"></div>
+    <canvas id="moonCanvas" width="320" height="320"></canvas>
+    <canvas id="cloudCanvas" width="320" height="320"></canvas>
+  </div>
+
+  <div id="petalLayer"></div>
+
+  <p class="hint" id="hint">▸ 手指滑開雲層，賞一輪明月</p>
+
+  <div id="blessing">
+    <p class="to" id="blessingTo">致　合作夥伴</p>
+    <p>花好月圓人團圓，<br>感謝這一年您與我們像圓月一樣完美的合作。</p>
+    <p class="sign">中秋節快樂</p>
+  </div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  /* ============ 個人化稱呼（網址參數 ?name=XXX） ============ */
+  var params = new URLSearchParams(window.location.search);
+  var clientName = (params.get('name') || '').trim();
+  document.getElementById('blessingTo').textContent =
+    '致　' + (clientName ? clientName : '合作夥伴');
+
+  /* ============ 星空 ============ */
+  var starLayer = document.getElementById('starLayer');
+  var starFrag = document.createDocumentFragment();
+  var STAR_COUNT = 60;
+  for (var i = 0; i < STAR_COUNT; i++) {
+    var s = document.createElement('div');
+    s.className = 'star';
+    s.style.left = (Math.random() * 100) + '%';
+    s.style.top = (Math.random() * 62) + '%';
+    s.style.animationDelay = (Math.random() * 3.5) + 's';
+    s.style.animationDuration = (2.5 + Math.random() * 3) + 's';
+    starFrag.appendChild(s);
+  }
+  starLayer.appendChild(starFrag);
+
+  /* ============ 桂花飄落 ============ */
+  var petalLayer = document.getElementById('petalLayer');
+  var petalRate = 1; // 1 = 平常, 提升為 2.4 在滿月時加速
+  function spawnPetal(){
+    var p = document.createElement('div');
+    p.className = 'petal';
+    var left = Math.random() * 100;
+    var duration = (7 + Math.random() * 6) / petalRate;
+    var drift = (Math.random() * 80 - 40) + 'px';
+    var size = 5 + Math.random() * 4;
+    p.style.left = left + '%';
+    p.style.width = size + 'px';
+    p.style.height = size + 'px';
+    p.style.setProperty('--drift', drift);
+    p.style.animationDuration = duration + 's';
+    p.style.opacity = (0.5 + Math.random() * 0.4).toFixed(2);
+    petalLayer.appendChild(p);
+    setTimeout(function(){ p.remove(); }, duration * 1000 + 200);
+  }
+  var petalTimer = setInterval(function(){
+    spawnPetal();
+    if (petalRate > 1.2) spawnPetal(); // 滿月時雙倍落花
+  }, 420);
+
+  /* ============ 月相繪製 ============ */
+  var moonCanvas = document.getElementById('moonCanvas');
+  var mctx = moonCanvas.getContext('2d');
+  var W = moonCanvas.width, H = moonCanvas.height;
+  var cx = W / 2, cy = H / 2, r = W * 0.42;
+
+  // 5 個月相階段：0 新月（暗）→ 4 滿月（亮）
+  var PHASES = [
+    { name: '新月' },
+    { name: '眉月' },
+    { name: '上弦月' },
+    { name: '盈凸月' },
+    { name: '滿月' }
+  ];
+  var phaseIndex = 0; // 揭幕時從新月開始
+  var locked = false;
+
+  function drawMoon(t){
+    // t: 0（新月，全暗）→ 1（滿月，全亮）
+    mctx.clearRect(0, 0, W, H);
+
+    // 月面底色（銀灰底，避免全暗時完全消失）
+    mctx.save();
+    mctx.beginPath();
+    mctx.arc(cx, cy, r, 0, Math.PI * 2);
+    var base = mctx.createRadialGradient(cx - r*0.3, cy - r*0.3, r*0.1, cx, cy, r);
+    base.addColorStop(0, '#3A2E52');
+    base.addColorStop(1, '#241A3A');
+    mctx.fillStyle = base;
+    mctx.fill();
+    mctx.restore();
+
+    // 明亮月面
+    mctx.save();
+    mctx.beginPath();
+    mctx.arc(cx, cy, r, 0, Math.PI * 2);
+    mctx.clip();
+    var bright = mctx.createRadialGradient(cx - r*0.28, cy - r*0.32, r*0.15, cx, cy, r*1.05);
+    bright.addColorStop(0, '#FFF6DE');
+    bright.addColorStop(0.55, '#F5D67B');
+    bright.addColorStop(1, '#D9A441');
+    mctx.fillStyle = bright;
+    mctx.fillRect(0, 0, W, H);
+
+    // 陰影（決定月相），offset 由亮到暗位移
+    var offset = r * (1 - 2 * t) * 1.05;
+    mctx.globalCompositeOperation = 'destination-out';
+    mctx.beginPath();
+    mctx.arc(cx + offset, cy, r * 1.02, 0, Math.PI * 2);
+    mctx.fillStyle = 'rgba(0,0,0,1)';
+    mctx.fill();
+    mctx.restore();
+
+    // 邊緣柔光
+    mctx.save();
+    mctx.beginPath();
+    mctx.arc(cx, cy, r, 0, Math.PI * 2);
+    mctx.clip();
+    mctx.globalCompositeOperation = 'lighter';
+    var rim = mctx.createRadialGradient(cx, cy, r*0.86, cx, cy, r);
+    rim.addColorStop(0, 'rgba(245,214,123,0)');
+    rim.addColorStop(1, 'rgba(245,214,123,' + (0.15 + 0.25*t) + ')');
+    mctx.fillStyle = rim;
+    mctx.fillRect(0, 0, W, H);
+    mctx.restore();
+
+    // 月光暈隨月相變亮
+    document.getElementById('moonGlow').style.opacity = (0.18 + 0.5 * t).toFixed(2);
+  }
+
+  function renderPhase(){
+    var t = phaseIndex / (PHASES.length - 1);
+    drawMoon(t);
+  }
+  renderPhase();
+
+  /* ============ 雲層擦除互動 ============ */
+  var cloudCanvas = document.getElementById('cloudCanvas');
+  var cctx = cloudCanvas.getContext('2d');
+  var revealed = false;
+
+  // 低解析度畫布，只用來快速估算「擦除比例」，避免每次滑動都在 320x320 全圖掃描造成卡頓
+  var LOW = 48;
+  var lowCanvas = document.createElement('canvas');
+  lowCanvas.width = LOW; lowCanvas.height = LOW;
+  var lowCtx = lowCanvas.getContext('2d');
+  var baselineAlpha = 0;
+  var needsCheck = false;
+
+  function syncLowRes(){
+    lowCtx.clearRect(0, 0, LOW, LOW);
+    lowCtx.drawImage(cloudCanvas, 0, 0, LOW, LOW);
+  }
+  function sumAlpha(){
+    var d = lowCtx.getImageData(0, 0, LOW, LOW).data;
+    var sum = 0;
+    for (var i = 3; i < d.length; i += 4) sum += d[i];
+    return sum;
+  }
+
+  function drawClouds(){
+    cctx.clearRect(0, 0, W, H);
+    cctx.globalCompositeOperation = 'source-over';
+
+    // 打底：一層完整覆蓋月亮整個範圍的雲霧，確保一開始月亮 100% 被遮住
+    // 半徑控制在畫布內（避免被方形畫布切成多邊形），邊緣自然淡出成蓬鬆感
+    var baseR = r * 1.15;
+    var base = cctx.createRadialGradient(cx, cy, baseR * 0.1, cx, cy, baseR);
+    base.addColorStop(0, 'rgba(233,228,241,0.98)');
+    base.addColorStop(0.65, 'rgba(224,216,236,0.95)');
+    base.addColorStop(0.9, 'rgba(216,206,230,0.82)');
+    base.addColorStop(1, 'rgba(216,206,230,0)');
+    cctx.fillStyle = base;
+    cctx.beginPath();
+    cctx.arc(cx, cy, baseR, 0, Math.PI * 2);
+    cctx.fill();
+
+    // 疊加蓬鬆團塊做出雲朵層次感（只加明暗變化，不會挖出透空的破洞）
+    var blobs = [
+      [0.30,0.35,0.30],[0.68,0.28,0.26],[0.50,0.55,0.34],
+      [0.22,0.68,0.24],[0.78,0.62,0.26],[0.48,0.20,0.22],
+      [0.85,0.42,0.20],[0.14,0.48,0.22]
+    ];
+    for (var i = 0; i < blobs.length; i++){
+      var bx = blobs[i][0]*W, by = blobs[i][1]*H, br = blobs[i][2]*W;
+      var g = cctx.createRadialGradient(bx,by,br*0.1,bx,by,br);
+      g.addColorStop(0,'rgba(255,252,255,0.5)');
+      g.addColorStop(1,'rgba(255,252,255,0)');
+      cctx.fillStyle = g;
+      cctx.beginPath();
+      cctx.arc(bx,by,br,0,Math.PI*2);
+      cctx.fill();
+    }
+  }
+  drawClouds();
+  syncLowRes();
+  baselineAlpha = sumAlpha();
+
+  function getPos(evt){
+    var rect = cloudCanvas.getBoundingClientRect();
+    var clientX = evt.touches ? evt.touches[0].clientX : evt.clientX;
+    var clientY = evt.touches ? evt.touches[0].clientY : evt.clientY;
+    return {
+      x: (clientX - rect.left) / rect.width * W,
+      y: (clientY - rect.top) / rect.height * H
+    };
+  }
+
+  var erasing = false;
+  var lastPos = null;
+  var BRUSH = W * 0.16;
+
+  function eraseDot(x, y){
+    cctx.globalCompositeOperation = 'destination-out';
+    cctx.beginPath();
+    cctx.arc(x, y, BRUSH, 0, Math.PI * 2);
+    cctx.fill();
+  }
+  // 沿著拖曳路徑補點，避免快速滑動時洞與洞之間留下沒擦到的縫隙
+  function eraseAt(pos){
+    if (lastPos){
+      var dx = pos.x - lastPos.x, dy = pos.y - lastPos.y;
+      var dist = Math.sqrt(dx*dx + dy*dy);
+      var step = BRUSH * 0.5;
+      var n = Math.min(Math.ceil(dist / step), 40);
+      for (var i = 1; i <= n; i++){
+        eraseDot(lastPos.x + dx * i / n, lastPos.y + dy * i / n);
+      }
+    } else {
+      eraseDot(pos.x, pos.y);
+    }
+    lastPos = pos;
+    needsCheck = true;
+  }
+
+  function checkErasedRatio(){
+    if (revealed) return;
+    syncLowRes();
+    var remain = sumAlpha();
+    var erasedRatio = 1 - (remain / baselineAlpha);
+    if (erasedRatio > 0.5){
+      revealed = true;
+      fadeOutClouds();
+    }
+  }
+  // 用 requestAnimationFrame 節流，而不是每個滑動事件都重新計算
+  (function loop(){
+    if (needsCheck){
+      needsCheck = false;
+      checkErasedRatio();
+    }
+    requestAnimationFrame(loop);
+  })();
+
+  function fadeOutClouds(){
+    var start = null;
+    function step(ts){
+      if (!start) start = ts;
+      var p = Math.min((ts - start) / 900, 1);
+      cctx.save();
+      cctx.globalCompositeOperation = 'destination-out';
+      cctx.fillStyle = 'rgba(0,0,0,' + (0.06) + ')';
+      cctx.fillRect(0,0,W,H);
+      cctx.restore();
+      if (p < 1) requestAnimationFrame(step);
+      else {
+        cctx.clearRect(0,0,W,H);
+        cloudCanvas.style.pointerEvents = 'none';
+        var hint = document.getElementById('hint');
+        hint.textContent = '▸ 點擊月亮，願花好月圓';
+        hint.classList.remove('hide');
+      }
+    }
+    requestAnimationFrame(step);
+  }
+
+  function onDown(e){
+    if (revealed) return;
+    erasing = true;
+    lastPos = null;
+    if (cloudCanvas.setPointerCapture && e.pointerId != null){
+      try { cloudCanvas.setPointerCapture(e.pointerId); } catch(err){}
+    }
+    eraseAt(getPos(e));
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  function onMove(e){
+    if (!erasing || revealed) return;
+    eraseAt(getPos(e));
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  function onUp(e){
+    erasing = false;
+    lastPos = null;
+    if (e) e.stopPropagation();
+  }
+
+  if (window.PointerEvent){
+    cloudCanvas.addEventListener('pointerdown', onDown);
+    cloudCanvas.addEventListener('pointermove', onMove);
+    cloudCanvas.addEventListener('pointerup', onUp);
+    cloudCanvas.addEventListener('pointercancel', onUp);
+  } else {
+    cloudCanvas.addEventListener('mousedown', onDown);
+    cloudCanvas.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+    cloudCanvas.addEventListener('touchstart', onDown, {passive:false});
+    cloudCanvas.addEventListener('touchmove', onMove, {passive:false});
+    cloudCanvas.addEventListener('touchend', onUp);
+  }
+
+  /* 初始提示淡出／淡入切換 */
+  var hintEl = document.getElementById('hint');
+
+  /* ============ 點擊月亮：變化陰晴圓缺 ============ */
+  function onMoonTap(){
+    if (!revealed || locked) return;
+    phaseIndex++;
+    if (phaseIndex >= PHASES.length - 1){
+      phaseIndex = PHASES.length - 1;
+      locked = true;
+      renderPhase();
+      celebrate();
+      return;
+    }
+    renderPhase();
+  }
+  moonCanvas.addEventListener('click', onMoonTap);
+  moonCanvas.addEventListener('touchend', function(e){
+    e.preventDefault();
+    onMoonTap();
+  }, {passive:false});
+
+  function celebrate(){
+    petalRate = 2.4;
+    hintEl.classList.add('hide');
+    setTimeout(function(){
+      document.getElementById('blessing').classList.add('show');
+    }, 500);
+    setTimeout(function(){ petalRate = 1; }, 6000);
+  }
+
+})();
+</script>
+
+</body>
+</html>
