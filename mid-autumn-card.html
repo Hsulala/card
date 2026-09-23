@@ -4,36 +4,37 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <title>中秋佳節・花好月圓</title>
+<!-- 引入優雅的襯線字體 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;700;900&family=Cormorant+Garamond:ital@1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,400;1,600&family=Noto+Serif+TC:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    /* 尊爵深邃的夜色色調 */
-    --sky-dark: #07040d;
-    --sky-light: #1c112e;
-    --moon-glow: #F6D365;
-    --cloud-base: #11091f;
-    --text-silver: #E8E3F0;
-    --text-gold: #F0C45B;
+    --bg-dark: #090514;
+    --bg-light: #1A1035;
+    --gold-light: #FDE68A;
+    --gold-main: #FCD34D;
+    --gold-dark: #D97706;
+    --text-white: #FDFBF7;
+    --text-gray: #D1D5DB;
   }
-  
+
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  
+
   html, body {
     margin: 0; padding: 0; width: 100%; height: 100%;
     overflow: hidden;
-    background: var(--sky-dark);
-    font-family: "Noto Serif TC", serif;
-    color: var(--text-silver);
+    background-color: var(--bg-dark);
+    font-family: 'Noto Serif TC', serif;
+    color: var(--text-white);
   }
 
-  /* ---------- 背景與星空 ---------- */
+  /* ---------- 深邃星空背景 ---------- */
   #scene {
     position: relative;
     width: 100%; height: 100vh; height: 100dvh;
+    background: radial-gradient(circle at 50% 45%, var(--bg-light) 0%, var(--bg-dark) 80%);
     overflow: hidden;
-    background: radial-gradient(ellipse 100% 100% at 50% 40%, var(--sky-light) 0%, var(--sky-dark) 80%);
   }
 
   .star {
@@ -41,256 +42,227 @@
     background: #FFF;
     border-radius: 50%;
     opacity: 0;
-    animation: starTwinkle var(--duration) ease-in-out infinite var(--delay);
-    box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
+    animation: starTwinkle var(--twinkle-dur) ease-in-out infinite var(--twinkle-del);
   }
 
   @keyframes starTwinkle {
-    0%, 100% { opacity: 0.1; transform: scale(0.6); }
-    50% { opacity: 0.9; transform: scale(1.2); }
+    0%, 100% { opacity: 0.1; transform: scale(0.5); box-shadow: none; }
+    50% { opacity: 0.8; transform: scale(1); box-shadow: 0 0 6px rgba(255,255,255,0.8); }
   }
 
-  /* ---------- 標題與排版 ---------- */
+  /* ---------- 頂部優雅標題 ---------- */
   .header {
     position: absolute; top: 0; left: 0; right: 0;
-    padding: calc(40px + env(safe-area-inset-top,0px)) 24px 0;
+    padding: calc(48px + env(safe-area-inset-top,0px)) 24px 0;
     text-align: center;
     z-index: 10;
     pointer-events: none;
-    /* 隨雲層撥開而淡入 */
     opacity: 0;
-    animation: textFadeIn 3s ease-out 1.5s forwards;
+    transform: translateY(15px);
+    animation: fadeInLift 3s ease-out 2s forwards;
   }
-  .eyebrow {
-    font-family: "Cormorant Garamond", serif;
+  .header .eyebrow {
+    font-family: 'Cormorant Garamond', serif;
     font-style: italic;
-    font-size: 14px;
-    letter-spacing: 0.4em;
-    color: var(--text-gold);
+    font-weight: 400;
+    font-size: 15px;
+    letter-spacing: 0.35em;
+    color: var(--gold-main);
+    margin: 0 0 14px 0;
     opacity: 0.9;
-    margin: 0 0 10px;
-    text-shadow: 0 2px 8px rgba(0,0,0,0.8);
   }
   .header h1 {
     margin: 0;
-    font-size: 32px;
-    font-weight: 700;
-    letter-spacing: 0.2em;
-    color: #FFF;
-    text-shadow: 0 0 24px rgba(246, 211, 101, 0.5), 0 4px 12px rgba(0,0,0,0.8);
+    font-weight: 400;
+    font-size: 30px;
+    letter-spacing: 0.25em;
+    color: var(--text-white);
+    text-shadow: 0 4px 16px rgba(0,0,0,0.6);
   }
 
-  /* ---------- 攝影級寫實月亮 ---------- */
-  .moon-container {
+  /* ---------- 質感明月 ---------- */
+  .moon-stage {
     position: absolute;
     top: 45%; left: 50%;
-    transform: translate(-50%, -40%) scale(0.9);
-    width: min(65vw, 320px);
+    transform: translate(-50%, -50%);
+    width: min(60vw, 260px);
     aspect-ratio: 1;
-    z-index: 3;
+    z-index: 2;
     opacity: 0;
-    /* 月亮升起與發光動畫 */
-    animation: moonRise 4s cubic-bezier(0.2, 0.8, 0.2, 1) 0.5s forwards;
+    animation: moonReveal 3s ease-out 0.5s forwards;
   }
-
-  .moon-halo {
-    position: absolute; inset: -40%;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(255,244,210,0.4) 0%, rgba(246,211,101,0.15) 30%, rgba(0,0,0,0) 70%);
-    filter: blur(10px);
-    animation: pulseHalo 6s ease-in-out infinite alternate;
-  }
-
   .moon {
-    position: absolute; inset: 0;
+    width: 100%; height: 100%;
     border-radius: 50%;
-    /* 營造月球球體立體感 */
-    background: radial-gradient(circle at 40% 40%, #FFFDEB 0%, #F6D67B 55%, #C28935 90%, #4A2B11 100%);
-    box-shadow: 
-      inset -15px -15px 40px rgba(40, 20, 5, 0.7),
-      inset 10px 10px 30px rgba(255, 255, 255, 0.9),
-      0 0 30px 5px rgba(246, 211, 101, 0.6),
-      0 0 80px 20px rgba(200, 140, 50, 0.3);
-    overflow: hidden;
+    /* 溫潤的立體球體漸層 */
+    background: radial-gradient(circle at 35% 35%, #FFFDF0 0%, #FEF3C7 25%, #FCD34D 70%, #D97706 100%);
+    box-shadow:
+      0 0 40px 10px rgba(252, 211, 77, 0.4),
+      0 0 100px 30px rgba(217, 119, 6, 0.2),
+      inset -16px -16px 32px rgba(146, 64, 14, 0.5),
+      inset 8px 8px 16px rgba(255, 255, 255, 0.8);
   }
 
-  /* 利用 SVG Noise 產生真實的月海與隕石坑紋理 */
-  .moon::after {
-    content: '';
-    position: absolute; inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.035' numOctaves='5' result='n'/%3E%3CfeColorMatrix type='matrix' values='1 0 0 0 0  0 0.9 0 0 0  0 0.8 0 0 0  0 0 0 0.8 0' in='n'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-    mix-blend-mode: color-burn; /* 加深紋理 */
-    opacity: 0.45;
-  }
-  .moon::before {
-    content: '';
-    position: absolute; inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise2'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.015' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise2)'/%3E%3C/svg%3E");
-    mix-blend-mode: overlay;
-    opacity: 0.3;
-  }
-
-  /* ---------- 邊緣透光的立體雲層 ---------- */
-  .cloud-stage {
-    position: absolute; inset: -20%;
+  /* ---------- 柔和霧氣雲層 (保證散開露出月亮) ---------- */
+  .cloud-gate {
+    position: absolute; top: 0; height: 100vh;
     z-index: 5;
     pointer-events: none;
-    filter: blur(18px); /* 讓雲層呈現柔和霧氣感 */
+  }
+  /* 左側雲門 */
+  .cloud-left {
+    left: 0; width: 50vw;
+    animation: slideLeft 4.5s cubic-bezier(0.3, 0.9, 0.4, 1) 1s forwards;
+  }
+  /* 右側雲門 */
+  .cloud-right {
+    right: 0; width: 50vw;
+    animation: slideRight 4.5s cubic-bezier(0.3, 0.9, 0.4, 1) 1s forwards;
   }
 
-  .cloud-group {
-    position: absolute;
-    width: 100vw; height: 100vh;
-    transition: transform 6s cubic-bezier(0.2, 0.8, 0.3, 1);
-  }
-  
-  .cloud-left { animation: partLeft 6s cubic-bezier(0.2, 0.8, 0.3, 1) forwards; }
-  .cloud-right { animation: partRight 6s cubic-bezier(0.2, 0.8, 0.3, 1) forwards; }
+  /* 確保雲層能向兩側完全退開，離開畫面中心 */
+  @keyframes slideLeft { 100% { transform: translateX(-65vw); opacity: 0.5; } }
+  @keyframes slideRight { 100% { transform: translateX(65vw); opacity: 0.5; } }
 
-  /* 雲團本體 */
+  /* 雲層的上下輕微呼吸漂浮 (與開門動畫分離，避免跳格) */
+  .cloud-float {
+    position: absolute; width: 100%; height: 100%;
+    animation: breath 8s ease-in-out infinite alternate;
+  }
+
+  @keyframes breath {
+    0% { transform: translateY(-10px); }
+    100% { transform: translateY(15px); }
+  }
+
+  /* 畫出雲朵的柔和圓團 */
   .puff {
     position: absolute;
-    background: var(--cloud-base);
+    background: radial-gradient(circle, #251842 0%, #150B26 60%, transparent 100%);
+    filter: blur(24px); /* 大量羽化邊緣，形成真實霧氣 */
     border-radius: 50%;
   }
+  /* 雲朵邊緣透出的微弱月光 */
+  .lit-left { box-shadow: 20px -10px 50px rgba(252, 211, 77, 0.15); }
+  .lit-right { box-shadow: -20px -10px 50px rgba(252, 211, 77, 0.15); }
 
-  /* 利用內陰影(inset box-shadow) 打造雲層被月光照亮的透光金邊 */
-  .cloud-left .puff { box-shadow: inset -25px 25px 40px rgba(246, 211, 101, 0.35); }
-  .cloud-right .puff { box-shadow: inset 25px 25px 40px rgba(246, 211, 101, 0.35); }
-
-  /* 配置雲朵位置與大小以遮蔽月亮 */
-  .cloud-left .p1 { width: 45vw; height: 45vw; top: 30%; left: 30%; }
-  .cloud-left .p2 { width: 35vw; height: 35vw; top: 20%; left: 15%; }
-  .cloud-left .p3 { width: 60vw; height: 40vw; top: 50%; left: 20%; }
+  /* 佈置左右雲團的相對位置 */
+  .cloud-left .puff:nth-child(1) { width: 60vh; height: 60vh; top: 20%; right: -25vh; }
+  .cloud-left .puff:nth-child(2) { width: 45vh; height: 45vh; top: -10%; right: 10vh; }
+  .cloud-left .puff:nth-child(3) { width: 50vh; height: 50vh; bottom: 0; right: -15vh; }
   
-  .cloud-right .p1 { width: 50vw; height: 50vw; top: 25%; right: 25%; }
-  .cloud-right .p2 { width: 40vw; height: 40vw; top: 15%; right: 10%; }
-  .cloud-right .p3 { width: 55vw; height: 45vw; top: 45%; right: 15%; }
+  .cloud-right .puff:nth-child(1) { width: 65vh; height: 65vh; top: 25%; left: -30vh; }
+  .cloud-right .puff:nth-child(2) { width: 40vh; height: 40vh; top: -5%; left: 5vh; }
+  .cloud-right .puff:nth-child(3) { width: 55vh; height: 55vh; bottom: -10%; left: -20vh; }
 
-  /* ---------- 落花 (桂花) ---------- */
+
+  /* ---------- 底部精緻祝福卡 ---------- */
+  .blessing {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    padding: 60px 32px calc(48px + env(safe-area-inset-bottom,0px));
+    text-align: center;
+    z-index: 10;
+    background: linear-gradient(180deg, rgba(9,5,20,0) 0%, rgba(9,5,20,0.85) 40%, #090514 100%);
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInLift 3s ease-out 3s forwards; /* 延遲 3 秒，等月亮出來後浮現 */
+  }
+  
+  .blessing .to {
+    font-weight: 300;
+    font-size: 15px;
+    letter-spacing: 0.2em;
+    color: var(--gold-main);
+    margin-bottom: 18px;
+  }
+  .blessing p {
+    margin: 0;
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 2.2;
+    letter-spacing: 0.1em;
+    color: var(--text-white);
+  }
+  .blessing .sign {
+    margin-top: 28px;
+    font-weight: 300;
+    font-size: 13px;
+    letter-spacing: 0.4em;
+    color: var(--text-gray);
+    opacity: 0.7;
+  }
+
+  /* ---------- 落桂花 ---------- */
   #petalLayer {
     position: absolute; inset: 0;
     z-index: 8;
     pointer-events: none;
   }
   .petal {
-    position: absolute;
-    top: -5%;
-    background: #F0C45B;
+    position: absolute; top: -10px;
+    background: var(--gold-main);
     border-radius: 2px 8px 2px 8px;
-    opacity: 0.85;
-    box-shadow: 0 0 8px rgba(240, 196, 91, 0.8);
-    animation-name: fall;
-    animation-timing-function: linear;
-    animation-iteration-count: 1; /* 獨立控制生命週期 */
-  }
-
-  /* ---------- 底部祝福文案 ---------- */
-  #blessing {
-    position: absolute;
-    left: 0; right: 0; bottom: 0;
-    padding: 60px 28px calc(48px + env(safe-area-inset-bottom,0px));
-    text-align: center;
-    z-index: 10;
-    background: linear-gradient(180deg, rgba(7,4,13,0) 0%, rgba(7,4,13,0.9) 40%, #07040D 100%);
-    opacity: 0;
-    /* 隨動畫進度優雅浮現 */
-    animation: textFadeIn 3s ease-out 2.5s forwards;
-  }
-  #blessing .to {
-    font-size: 16px;
-    letter-spacing: 0.15em;
-    color: var(--text-gold);
-    margin: 0 0 16px;
-  }
-  #blessing p {
-    margin: 0;
-    font-size: 17px;
-    line-height: 2.4;
-    font-weight: 500;
-    color: var(--text-silver);
-    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-  }
-  #blessing .sign {
-    margin-top: 24px;
-    font-size: 13px;
-    letter-spacing: 0.3em;
-    color: rgba(232, 227, 240, 0.5);
+    opacity: 0.8;
+    box-shadow: 0 0 6px rgba(252, 211, 77, 0.6);
+    animation: fall linear forwards;
   }
 
   /* ---------- 動畫 Keyframes ---------- */
-  @keyframes moonRise {
-    0% { transform: translate(-50%, -30%) scale(0.85); opacity: 0; filter: brightness(0.6); }
-    100% { transform: translate(-50%, -45%) scale(1); opacity: 1; filter: brightness(1.1); }
+  @keyframes fadeInLift {
+    to { opacity: 1; transform: translateY(0); }
   }
-  @keyframes pulseHalo {
-    0% { transform: scale(0.95); opacity: 0.7; }
-    100% { transform: scale(1.05); opacity: 1; }
-  }
-  @keyframes partLeft {
-    0% { transform: translateX(20vw) translateY(5vh) scale(1.1); }
-    100% { transform: translateX(-40vw) translateY(0) scale(1); } /* 撥開後稍微縮小並後退 */
-  }
-  @keyframes partRight {
-    0% { transform: translateX(-20vw) translateY(5vh) scale(1.1); }
-    100% { transform: translateX(40vw) translateY(0) scale(1); }
-  }
-  @keyframes textFadeIn {
-    0% { opacity: 0; transform: translateY(20px); }
-    100% { opacity: 1; transform: translateY(0); }
+  @keyframes moonReveal {
+    0% { opacity: 0; transform: translate(-50%, -40%) scale(0.9); }
+    100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
   }
   @keyframes fall {
     0% { transform: translateY(-5vh) translateX(0) rotate(0deg); }
     100% { transform: translateY(110vh) translateX(var(--drift)) rotate(320deg); }
   }
-  
-  /* 添加底部的緩慢漂浮感，讓畫面生動 */
-  .cloud-floating-left { animation: floatLeft 12s ease-in-out infinite alternate 6s; }
-  .cloud-floating-right { animation: floatRight 14s ease-in-out infinite alternate 6s; }
-  @keyframes floatLeft { 0% { transform: translateX(-40vw); } 100% { transform: translateX(-37vw) translateY(-2vh); } }
-  @keyframes floatRight { 0% { transform: translateX(40vw); } 100% { transform: translateX(37vw) translateY(2vh); } }
 </style>
 </head>
 <body>
 
 <div id="scene">
-  <!-- 繁星 -->
+  <!-- 繁星點點 -->
   <div id="starLayer"></div>
 
-  <!-- 標題 -->
+  <!-- 頂部標題 -->
   <div class="header">
     <p class="eyebrow">MID-AUTUMN FESTIVAL</p>
     <h1>中秋佳節・花好月圓</h1>
   </div>
 
-  <!-- 寫實月亮 -->
-  <div class="moon-container">
-    <div class="moon-halo"></div>
+  <!-- 明月 -->
+  <div class="moon-stage">
     <div class="moon"></div>
   </div>
 
-  <!-- 體積雲層 -->
-  <div class="cloud-stage">
-    <div class="cloud-group cloud-left" id="cLeft">
-      <div class="puff p1"></div>
-      <div class="puff p2"></div>
-      <div class="puff p3"></div>
+  <!-- 雲層 -->
+  <div class="cloud-gate cloud-left">
+    <div class="cloud-float">
+      <!-- 圓團透過高斯模糊結合成柔和霧氣 -->
+      <div class="puff lit-left"></div>
+      <div class="puff lit-left"></div>
+      <div class="puff"></div>
     </div>
-    <div class="cloud-group cloud-right" id="cRight">
-      <div class="puff p1"></div>
-      <div class="puff p2"></div>
-      <div class="puff p3"></div>
+  </div>
+  <div class="cloud-gate cloud-right">
+    <div class="cloud-float" style="animation-delay: -3s;"> <!-- 左右漂浮頻率錯開 -->
+      <div class="puff lit-right"></div>
+      <div class="puff lit-right"></div>
+      <div class="puff"></div>
     </div>
   </div>
 
-  <!-- 桂花飄落層 -->
+  <!-- 落花層 -->
   <div id="petalLayer"></div>
 
-  <!-- 祝福卡片 -->
-  <div id="blessing">
-    <p class="to" id="blessingTo">致 合作夥伴</p>
+  <!-- 祝福文案 -->
+  <div class="blessing">
+    <div class="to" id="blessingTo">致 合作夥伴</div>
     <p>花好月圓人團圓，<br>感謝這一年您與我們像圓月一樣完美的合作。</p>
-    <p class="sign">中秋節快樂</p>
+    <div class="sign">中秋節快樂</div>
   </div>
 </div>
 
@@ -298,59 +270,55 @@
 (function(){
   'use strict';
 
-  // --- 解析網址參數作為稱呼 ---
-  var params = new URLSearchParams(window.location.search);
-  var clientName = (params.get('name') || '').trim();
-  document.getElementById('blessingTo').textContent =
+  // --- 解析網址參數作為稱呼 (?name=客戶名稱) ---
+  const params = new URLSearchParams(window.location.search);
+  const clientName = (params.get('name') || '').trim();
+  document.getElementById('blessingTo').textContent = 
     '致 ' + (clientName ? clientName : '合作夥伴');
 
-  // --- 生成繁星 ---
-  var starLayer = document.getElementById('starLayer');
-  var starFrag = document.createDocumentFragment();
-  for (var i = 0; i < 70; i++) {
-    var s = document.createElement('div');
+  // --- 生成星空 ---
+  const starLayer = document.getElementById('starLayer');
+  const starFrag = document.createDocumentFragment();
+  for (let i = 0; i < 60; i++) {
+    const s = document.createElement('div');
     s.className = 'star';
-    var size = 1 + Math.random() * 2;
+    const size = Math.random() * 2 + 1;
     s.style.width = size + 'px';
     s.style.height = size + 'px';
-    s.style.left = (Math.random() * 100) + '%';
-    s.style.top = (Math.random() * 70) + '%';
-    s.style.setProperty('--delay', (Math.random() * 4) + 's');
-    s.style.setProperty('--duration', (3 + Math.random() * 4) + 's');
+    s.style.left = Math.random() * 100 + '%';
+    s.style.top = Math.random() * 80 + '%';
+    // CSS 變數控制各自的閃爍節奏
+    s.style.setProperty('--twinkle-del', (Math.random() * 5) + 's');
+    s.style.setProperty('--twinkle-dur', (3 + Math.random() * 4) + 's');
     starFrag.appendChild(s);
   }
   starLayer.appendChild(starFrag);
 
-  // --- 動態落花 (在月亮升起後開始掉落) ---
-  var petalLayer = document.getElementById('petalLayer');
+  // --- 動態生成桂花 ---
+  const petalLayer = document.getElementById('petalLayer');
   function spawnPetal(){
-    var p = document.createElement('div');
+    const p = document.createElement('div');
     p.className = 'petal';
-    p.style.left = (Math.random() * 100) + '%';
-    var duration = 6 + Math.random() * 6;
-    var size = 4 + Math.random() * 5;
+    p.style.left = (10 + Math.random() * 80) + '%';
+    
+    const size = 4 + Math.random() * 4;
     p.style.width = size + 'px';
     p.style.height = size + 'px';
-    p.style.setProperty('--drift', (Math.random() * 120 - 60) + 'px');
+    
+    const duration = 7 + Math.random() * 5;
     p.style.animationDuration = duration + 's';
-    p.style.opacity = (0.5 + Math.random() * 0.5).toFixed(2);
+    p.style.setProperty('--drift', (Math.random() * 100 - 50) + 'px');
+    
     petalLayer.appendChild(p);
     
-    // 生命週期結束後移除 DOM
-    setTimeout(function(){ p.remove(); }, duration * 1000 + 100);
+    // 落地後清除 DOM
+    setTimeout(() => { p.remove(); }, duration * 1000);
   }
 
-  // 延遲 2.5 秒後（配合雲層撥開）開始飄落桂花
-  setTimeout(function(){
-    setInterval(spawnPetal, 400);
-  }, 2500);
-
-  // --- 動畫接續處理 ---
-  // 讓雲朵撥開後進入微微漂浮的狀態
-  setTimeout(function(){
-    document.getElementById('cLeft').classList.add('cloud-floating-left');
-    document.getElementById('cRight').classList.add('cloud-floating-right');
-  }, 6000);
+  // 等待雲層撥開後（延遲 1.5 秒），開始緩慢飄落桂花
+  setTimeout(() => {
+    setInterval(spawnPetal, 500);
+  }, 1500);
 
 })();
 </script>
