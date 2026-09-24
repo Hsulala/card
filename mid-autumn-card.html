@@ -94,7 +94,6 @@
   .moon {
     width: 100%; height: 100%;
     border-radius: 50%;
-    /* 溫潤的立體球體漸層 */
     background: radial-gradient(circle at 35% 35%, #FFFDF0 0%, #FEF3C7 25%, #FCD34D 70%, #D97706 100%);
     box-shadow:
       0 0 40px 10px rgba(252, 211, 77, 0.4),
@@ -103,28 +102,24 @@
       inset 8px 8px 16px rgba(255, 255, 255, 0.8);
   }
 
-  /* ---------- 柔和霧氣雲層 (保證散開露出月亮) ---------- */
+  /* ---------- 柔和霧氣雲層 ---------- */
   .cloud-gate {
     position: absolute; top: 0; height: 100vh;
     z-index: 5;
     pointer-events: none;
   }
-  /* 左側雲門 */
   .cloud-left {
     left: 0; width: 50vw;
     animation: slideLeft 4.5s cubic-bezier(0.3, 0.9, 0.4, 1) 1s forwards;
   }
-  /* 右側雲門 */
   .cloud-right {
     right: 0; width: 50vw;
     animation: slideRight 4.5s cubic-bezier(0.3, 0.9, 0.4, 1) 1s forwards;
   }
 
-  /* 確保雲層能向兩側完全退開，離開畫面中心 */
   @keyframes slideLeft { 100% { transform: translateX(-65vw); opacity: 0.5; } }
   @keyframes slideRight { 100% { transform: translateX(65vw); opacity: 0.5; } }
 
-  /* 雲層的上下輕微呼吸漂浮 (與開門動畫分離，避免跳格) */
   .cloud-float {
     position: absolute; width: 100%; height: 100%;
     animation: breath 8s ease-in-out infinite alternate;
@@ -135,18 +130,15 @@
     100% { transform: translateY(15px); }
   }
 
-  /* 畫出雲朵的柔和圓團 */
   .puff {
     position: absolute;
     background: radial-gradient(circle, #251842 0%, #150B26 60%, transparent 100%);
-    filter: blur(24px); /* 大量羽化邊緣，形成真實霧氣 */
+    filter: blur(24px);
     border-radius: 50%;
   }
-  /* 雲朵邊緣透出的微弱月光 */
   .lit-left { box-shadow: 20px -10px 50px rgba(252, 211, 77, 0.15); }
   .lit-right { box-shadow: -20px -10px 50px rgba(252, 211, 77, 0.15); }
 
-  /* 佈置左右雲團的相對位置 */
   .cloud-left .puff:nth-child(1) { width: 60vh; height: 60vh; top: 20%; right: -25vh; }
   .cloud-left .puff:nth-child(2) { width: 45vh; height: 45vh; top: -10%; right: 10vh; }
   .cloud-left .puff:nth-child(3) { width: 50vh; height: 50vh; bottom: 0; right: -15vh; }
@@ -154,7 +146,6 @@
   .cloud-right .puff:nth-child(1) { width: 65vh; height: 65vh; top: 25%; left: -30vh; }
   .cloud-right .puff:nth-child(2) { width: 40vh; height: 40vh; top: -5%; left: 5vh; }
   .cloud-right .puff:nth-child(3) { width: 55vh; height: 55vh; bottom: -10%; left: -20vh; }
-
 
   /* ---------- 底部精緻祝福卡 ---------- */
   .blessing {
@@ -165,7 +156,7 @@
     background: linear-gradient(180deg, rgba(9,5,20,0) 0%, rgba(9,5,20,0.85) 40%, #090514 100%);
     opacity: 0;
     transform: translateY(20px);
-    animation: fadeInLift 3s ease-out 3s forwards; /* 延遲 3 秒，等月亮出來後浮現 */
+    animation: fadeInLift 3s ease-out 3s forwards;
   }
   
   .blessing .to {
@@ -224,44 +215,38 @@
 <body>
 
 <div id="scene">
-  <!-- 繁星點點 -->
   <div id="starLayer"></div>
 
-  <!-- 頂部標題 -->
   <div class="header">
     <p class="eyebrow">MID-AUTUMN FESTIVAL</p>
     <h1>中秋佳節・花好月圓</h1>
   </div>
 
-  <!-- 明月 -->
   <div class="moon-stage">
     <div class="moon"></div>
   </div>
 
-  <!-- 雲層 -->
   <div class="cloud-gate cloud-left">
     <div class="cloud-float">
-      <!-- 圓團透過高斯模糊結合成柔和霧氣 -->
       <div class="puff lit-left"></div>
       <div class="puff lit-left"></div>
       <div class="puff"></div>
     </div>
   </div>
   <div class="cloud-gate cloud-right">
-    <div class="cloud-float" style="animation-delay: -3s;"> <!-- 左右漂浮頻率錯開 -->
+    <div class="cloud-float" style="animation-delay: -3s;">
       <div class="puff lit-right"></div>
       <div class="puff lit-right"></div>
       <div class="puff"></div>
     </div>
   </div>
 
-  <!-- 落花層 -->
   <div id="petalLayer"></div>
 
-  <!-- 祝福文案 -->
   <div class="blessing">
     <div class="to" id="blessingTo">致 合作夥伴</div>
-    <p>花好月圓人團圓，<br>感謝這一年您與我們像圓月一樣完美的合作。</p>
+    <!-- 這裡預留一個 id，透過下面的 JavaScript 來填入隨機文案 -->
+    <p id="blessingText"></p>
     <div class="sign">中秋節快樂</div>
   </div>
 </div>
@@ -276,6 +261,16 @@
   document.getElementById('blessingTo').textContent = 
     '致 ' + (clientName ? clientName : '合作夥伴');
 
+  // --- 隨機生成祝福文案 ---
+  const messages = [
+    "明月朗朗，桂香盈袖。<br>願這澄澈的月光，照亮我們每一次美好的相遇，以及充滿無限可能的未來！",
+    "星光點點，月色正美！<br>無論是並肩同行或初次相識，都願您中秋佳節，圓滿如意，好運連連！",
+    "花好月圓，秋風送爽。<br>在這個美好的時節，期待未來能與您激盪出更多耀眼的火花！"
+  ];
+  // 隨機抽選一條 (0, 1, 或 2)
+  const randomMsg = messages[Math.floor(Math.random() * messages.length)];
+  document.getElementById('blessingText').innerHTML = randomMsg;
+
   // --- 生成星空 ---
   const starLayer = document.getElementById('starLayer');
   const starFrag = document.createDocumentFragment();
@@ -287,7 +282,6 @@
     s.style.height = size + 'px';
     s.style.left = Math.random() * 100 + '%';
     s.style.top = Math.random() * 80 + '%';
-    // CSS 變數控制各自的閃爍節奏
     s.style.setProperty('--twinkle-del', (Math.random() * 5) + 's');
     s.style.setProperty('--twinkle-dur', (3 + Math.random() * 4) + 's');
     starFrag.appendChild(s);
@@ -311,7 +305,6 @@
     
     petalLayer.appendChild(p);
     
-    // 落地後清除 DOM
     setTimeout(() => { p.remove(); }, duration * 1000);
   }
 
